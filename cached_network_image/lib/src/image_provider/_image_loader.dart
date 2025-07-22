@@ -23,7 +23,6 @@ class ImageLoader implements platform.ImageLoader {
     int? maxHeight,
     int? maxWidth,
     Map<String, String>? headers,
-    VoidCallback? errorListener,
     ImageRenderMethodForWeb imageRenderMethodForWeb,
     VoidCallback evictImage,
   ) {
@@ -39,7 +38,6 @@ class ImageLoader implements platform.ImageLoader {
       maxHeight,
       maxWidth,
       headers,
-      (_) => errorListener?.call(),
       imageRenderMethodForWeb,
       evictImage,
     );
@@ -55,7 +53,6 @@ class ImageLoader implements platform.ImageLoader {
     int? maxHeight,
     int? maxWidth,
     Map<String, String>? headers,
-    ErrorListener? errorListener,
     ImageRenderMethodForWeb imageRenderMethodForWeb,
     VoidCallback evictImage,
   ) {
@@ -71,7 +68,6 @@ class ImageLoader implements platform.ImageLoader {
       maxHeight,
       maxWidth,
       headers,
-      errorListener,
       imageRenderMethodForWeb,
       evictImage,
     );
@@ -86,7 +82,6 @@ class ImageLoader implements platform.ImageLoader {
     int? maxHeight,
     int? maxWidth,
     Map<String, String>? headers,
-    ErrorListener? errorListener,
     ImageRenderMethodForWeb imageRenderMethodForWeb,
     VoidCallback evictImage,
   ) async* {
@@ -130,16 +125,14 @@ class ImageLoader implements platform.ImageLoader {
           yield decoded;
         }
       }
-    } on Object catch (e) {
+    } on Object catch (error, stackTrace) {
       // Depending on where the exception was thrown, the image cache may not
       // have had a chance to track the key in the cache at all.
       // Schedule a microtask to give the cache a chance to add the key.
       scheduleMicrotask(() {
         evictImage();
       });
-
-      errorListener?.call(e);
-      rethrow;
+      yield* Stream.error(error, stackTrace);
     } finally {
       await chunkEvents.close();
     }
