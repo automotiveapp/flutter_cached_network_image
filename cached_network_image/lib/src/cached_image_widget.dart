@@ -55,7 +55,8 @@ class CachedNetworkImage extends StatelessWidget {
     BaseCacheManager? cacheManager,
     double scale = 1,
   }) async {
-    final effectiveCacheManager = cacheManager ?? DefaultCacheManager();
+    final effectiveCacheManager =
+        cacheManager ?? CachedNetworkImageProvider.defaultCacheManager;
     await effectiveCacheManager.removeFile(cacheKey ?? url);
     return CachedNetworkImageProvider(url, scale: scale).evict();
   }
@@ -240,6 +241,7 @@ class CachedNetworkImage extends StatelessWidget {
     this.errorListener,
     ImageRenderMethodForWeb imageRenderMethodForWeb =
         ImageRenderMethodForWeb.HtmlImage,
+    double scale = 1.0,
   }) : _image = CachedNetworkImageProvider(
           imageUrl,
           headers: httpHeaders,
@@ -249,6 +251,7 @@ class CachedNetworkImage extends StatelessWidget {
           maxWidth: maxWidthDiskCache,
           maxHeight: maxHeightDiskCache,
           errorListener: errorListener,
+          scale: scale,
         );
 
   @override

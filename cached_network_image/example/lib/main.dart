@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:baseflow_plugin_template/baseflow_plugin_template.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -106,6 +108,14 @@ class BasicContent extends StatelessWidget {
                 placeholder: (context, url) =>
                     const CircularProgressIndicator(),
                 errorWidget: (context, url, error) => const Icon(Icons.error),
+                errorListener: (e) {
+                  if (e is SocketException) {
+                    debugPrint(
+                        'Error with ${e.address} and message ${e.message}');
+                  } else {
+                    debugPrint('Image Exception is: ${e.runtimeType}');
+                  }
+                },
               ),
             ),
             _sizedContainer(
@@ -132,7 +142,7 @@ class BasicContent extends StatelessWidget {
           aspectRatio: 1.6,
           child: BlurHash(hash: 'LEHV6nWB2yk8pyo0adR*.7kCMdnj'),
         ),
-        imageUrl: 'https://blurha.sh/assets/images/img1.jpg',
+        imageUrl: 'https://blurha.sh/12c2aca29ea896a628be.jpg',
         fit: BoxFit.cover,
       ),
     );
